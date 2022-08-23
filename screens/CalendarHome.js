@@ -1,14 +1,15 @@
 import React, { useState } from 'react'
 import { StyleSheet, View, Text, Modal, Pressable, Alert, TouchableOpacity } from 'react-native';
 import { ThemeContext } from "../themes/theme-context";
-import { MaterialCommunityIcons } from "@expo/vector-icons";
+import { Ionicons } from "@expo/vector-icons";
 import Swiper from 'react-native-swiper';
 import TaskManager from './TaskManager';
 import ToDo from './ToDo';
 import Memo from './Memo';
 import { Calendar, CalendarList, Agenda } from 'react-native-calendars';
 import moment from 'moment';
-import CustomCarousel from './components/CustomCarousel';
+import CustomCards from './components/CustomCards';
+
 
 
 function CalendarHome({ navigation }) {
@@ -22,29 +23,8 @@ function CalendarHome({ navigation }) {
     const [archiveDate, setArchiveDate] = useState("");
     const [modalVisible, setModalVisible] = useState(false);
 
-   
     return (
         <View style={styles.container}>
-              <Modal
-                animationType='none'
-                transparent={true}
-                visible={modalVisible}
-                onRequestClose={() => {
-                    Alert.alert("Modal has been closed.");
-                    setModalVisible(!modalVisible);
-                }}
-            >
-                <TouchableOpacity style={styles.centeredView} onPress={() => { setModalVisible(false) }}>
-                    <TouchableOpacity style={styles.modal} onPress={() => console.log('do nothing')} activeOpacity={1} >
-
-                        <View style={[styles.modalView, { backgroundColor: theme.backgroundColor, }]}>
-                            <CustomCarousel day= {archiveDate}/>
-                        </View>
-
-                    </TouchableOpacity>
-                </TouchableOpacity>
-            </Modal>
-
             <Swiper
                 style={styles.wrapper}
                 showsPagination={false}
@@ -53,11 +33,31 @@ function CalendarHome({ navigation }) {
             >
                 <View style={[styles.swiperContainer, { backgroundColor: theme.backgroundColor }]}>
                     <View style={styles.container}>
+                        <Modal
+                            animationType="slide"
+                            transparent={true}
+                            visible={modalVisible}
+                            onRequestClose={() => {
+                                Alert.alert("Modal has been closed.");
+                                setModalVisible(!modalVisible);
+                            }}
+                        >
+                            <TouchableOpacity style={styles.centeredView} onPress={() => { setModalVisible(false) }}>
+                                <TouchableOpacity style={styles.modal} onPress={() => console.log('do nothing')} activeOpacity={1} >
+
+                                    <View style={[styles.modalView, { backgroundColor: theme.backgroundColor, }]}>
+                                  <CustomCards day={archiveDate}/>
+                                    </View>
+
+                                </TouchableOpacity>
+                            </TouchableOpacity>
+                        </Modal>
+
                         <View styles={styles.themeIconContainer}>
-                            <MaterialCommunityIcons
+                            <Ionicons
                                 style={styles.themeIcon}
                                 onPress={showTheme}
-                                name="palette"
+                                name="color-palette"
                                 size={40}
                                 color={theme.color}
                             />
@@ -83,6 +83,7 @@ function CalendarHome({ navigation }) {
                                         setArchiveDate(selectedDay);
                                         setModalVisible(true);
                                     } else {
+
                                         setDay(day.dateString);
                                         //re render
                                     }
@@ -118,11 +119,12 @@ function CalendarHome({ navigation }) {
 
                             />
                         </View>
+
                     </View >
                 </View>
 
                 <View style={[styles.swiperContainer, { backgroundColor: theme.backgroundColor }]}>
-                    <TaskManager />
+                    <TaskManager day={day} />
                 </View>
 
                 <View style={[styles.swiperContainer, { backgroundColor: theme.backgroundColor }]}>
@@ -184,7 +186,7 @@ const styles = StyleSheet.create({
     },
     modalView: {
         width: 350,
-        height:550,
+        height: 400,
         margin: 20,
         borderRadius: 20,
         padding: 35,

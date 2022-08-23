@@ -7,7 +7,8 @@ module.exports = {
       buttonColor: "#FFE2A8", //baby orange
       secColor: "#914b00", //dark brown
       pinkColor: '#ff9797', // normal pink
-      white: "white"
+      white: "white",
+      gray: "gray"
     },
     niceTheme: {
       backgroundColor: "#141414",
@@ -17,7 +18,8 @@ module.exports = {
       buttonColor: "#CC8800",
       secColor: "#ffe1c2",
       pinkColor: '#916384',  //dark pink
-      white:"white"
+      white:"white",
+      gray:"gray"
       
     },
   };
