@@ -6,7 +6,7 @@ import { ThemeProvider } from './themes/theme-context';
 import { NavigationContainer } from '@react-navigation/native';
 import { createNativeStackNavigator } from '@react-navigation/native-stack';
 import { ActionSheetProvider } from "@expo/react-native-action-sheet";
-
+import "./ignoreWarning"
 import { initializeApp } from "firebase/app";
 
 const firebaseConfig = {

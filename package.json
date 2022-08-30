@@ -32,6 +32,7 @@
     "react-native-snap-carousel": "^3.9.1",
     "react-native-swiper": "^1.6.0",
     "react-native-timeline-flatlist": "^0.8.0",
+    "react-native-unordered-list": "^1.0.4",
     "react-native-web": "0.17.7"
   },
   "devDependencies": {

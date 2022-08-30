@@ -1,42 +1,41 @@
-import { View, Text, StyleSheet, Pressable, Modal, TouchableOpacity } from 'react-native'
+import { View, Text, StyleSheet, Pressable, Modal, TouchableOpacity, Alert } from 'react-native'
 import React, { useState, useEffect } from 'react'
 import { ThemeContext } from "../themes/theme-context";
 import Timeline from 'react-native-timeline-flatlist';
 import CustomInput from './components/CustomInputs';
 import CustomDateTimePicker from './components/CustomDateTimePicker';
 import { useIsFocused } from '@react-navigation/native';
+import * as Haptics from "expo-haptics";
+import { useActionSheet } from "@expo/react-native-action-sheet";
 import { db } from "../firebase";
-import { collection, query, where, getDocs, deleteDoc, setDoc, doc } from "firebase/firestore";
+import { collection, query, where, getDocs, deleteDoc, setDoc, doc, orderBy } from "firebase/firestore";
 
 const TaskManager = ({ day }) => {
-    const [modalVisible, setModalVisible] = useState(false);
+    const { showActionSheetWithOptions } = useActionSheet();
+    const isFocused = useIsFocused();
+    const { dark, theme, toggle } = React.useContext(ThemeContext);
+
     const [startTimeController, setStartTimeController] = useState("");
-    const [titleController, setTitleController] = useState("");
+    const [startTimeControlleOld, setStartTimeControllerOld] = useState("");
+    const [titleController, setTitleController] = useState("");  
+    const [titleControllerOld, setTitleControllerOld] = useState("");
     const [descriptionController, setDescriptionController] = useState("");
+    const [descriptionControllerOld, setDescriptionControllerOld] = useState("");
+
+    const [modalVisible, setModalVisible] = useState(false);
     const [timelineList, setTimelineList] = useState([]);
     const [state, setState] = useState(false);
     const [isLoading, setIsLoading] = useState(true);
     const [isEdit, setIsEdit] = useState(false);
 
-    const isFocused = useIsFocused();
+   
 
-
-    const data = [
-        { time: '09:00', title: 'Event 1', description: 'Event 1 Description' },
-        { time: '10:45', title: 'Event 2', description: 'Event 2 Description' },
-        { time: '12:00', title: 'Event 3', description: 'Event 3 Description' },
-        { time: '14:00', title: 'Event 4', description: 'Event 4 Description' },
-        { time: '16:30', title: 'Event 5', description: 'Event 5 Description' }
-    ]
-
-    const { dark, theme, toggle } = React.useContext(ThemeContext);
-
-    const addTimeline = () => {
+    const openTimelineModal = () => {
         setModalVisible(true)
     }
     useEffect(() => {
         const loadTimelineList = async () => {
-            const q = query(collection(db, "Timeline", day, "timeline"));
+            const q = query(collection(db, "Timelines", day, "timeline"), orderBy("time"));
 
             const querySnapshot = await getDocs(q);
             let timelines = [];
@@ -61,6 +60,108 @@ const TaskManager = ({ day }) => {
     const getTimestampInSeconds = () => {
         return Math.floor(Date.now() / 1000).toString()
     }
+    const addTimeline = async () => {
+		// setTodoList([...todoList, { text: todoController }]);
+		const timestamp = 
+		await setDoc(doc(db, `Timelines/${day}/timeline`, getTimestampInSeconds()), {
+            time: startTimeController,
+			title: titleController,
+            description: descriptionController,
+			completed: false,
+		})
+        setStartTimeController("")
+		setTitleController("")
+        setDescriptionController("")
+		setState(!state);
+	}
+
+	const deleteTimeline = async (timeline) => {
+
+		const d = query(collection(db, 'Timelines', day, "timeline"), where('title', '==', timeline.title));
+		const docSnap = await getDocs(d);
+		docSnap.forEach((doc) => {
+			deleteDoc(doc.ref);
+			setState(!state);
+			Alert.alert(
+				"Hooray!",
+				`${timeline.title} have been deleted!`
+			);
+		});
+	}
+
+	const editTimeline = (timeline) => {
+		setModalVisible(true);
+		setIsEdit(true);
+
+        setStartTimeController(timeline.time);
+        setStartTimeControllerOld(timeline.time);
+		setTitleController(timeline.title);
+		setTitleControllerOld(timeline.title);
+        setDescriptionController(timeline.description);
+        setDescriptionControllerOld(timeline.description);
+	}
+
+	const updateTimeline = async () => {
+        console.log("entered")
+		const up = query(collection(db, 'Timelines', day, "timeline"), where('title', '==', titleControllerOld));
+		const docSnap = await getDocs(up);
+		docSnap.forEach((doc) => {
+			setDoc(doc.ref, {
+				time: startTimeController,
+				title: titleController,
+                description: descriptionController,
+			});
+			setState(!state);
+			Alert.alert(
+				"Hooray!",
+				`${titleControllerOld} have been updated to ${titleController}!`
+			);
+            setStartTimeController("");
+            setStartTimeControllerOld("");
+			setTitleController("");
+			setTitleControllerOld("");
+            setDescriptionController("");
+            setDescriptionControllerOld("");
+		});
+	}
+
+
+	const openTimelineSheet = (timeline) => {
+		const options = [
+			`Edit ${timeline.title}` ,
+			`Delete ${timeline.title}`,
+			"Cancel",
+		];
+		const cancelButtonIndex = 2;
+		const destructiveButtonIndex = 1;
+
+		showActionSheetWithOptions(
+			{
+				options,
+				cancelButtonIndex,
+				destructiveButtonIndex,
+				userInterfaceStyle: dark ? "dark" : "light",
+			},
+			(buttonIndex) => {
+				if (buttonIndex === destructiveButtonIndex) {
+					Alert.alert(`Delete ${timeline.title}`,
+						`Are you sure you want to delete activity ${timeline.title}? `,
+						[
+							{
+								text: "Cancel",
+								onPress: () => console.log("Cancel Pressed"),
+								style: "cancel"
+							},
+							{ text: "OK", onPress: () => deleteTimeline(timeline) }
+						]
+					);
+
+				} else if (buttonIndex === 0) {
+					editTimeline(timeline);
+				}
+			}
+		);
+	};
 
     return (
         <View style={[styles.container, { backgroundColor: theme.backgroundColor }]}>
@@ -82,6 +183,7 @@ const TaskManager = ({ day }) => {
                                 placeholder="Start Time"
                                 modes="time"
                                 onDateChange={setStartTimeController}
+                                dateValue={startTimeController}
                             />
 
                             <CustomInput
@@ -101,9 +203,9 @@ const TaskManager = ({ day }) => {
                                 onPress={() => {
                                     setModalVisible(!modalVisible);
                                     if (isEdit) {
-                                        updatePostIt();
+                                        updateTimeline();
                                     } else {
-                                        addPostIt();
+                                        addTimeline();
                                     }
                                 }}
                             >
@@ -117,7 +219,7 @@ const TaskManager = ({ day }) => {
 
             <Timeline
                 style={styles.list}
-                data={data}
+                data={timelineList}
                 circleSize={20}
                 circleColor={theme.backgroundCard}
                 lineColor={theme.backgroundCard}
@@ -131,11 +233,12 @@ const TaskManager = ({ day }) => {
                 separator={false}
                 detailContainerStyle={[styles.detailContainer, { backgroundColor: theme.backgroundCard, }]}
                 columnFormat='two-column'
+                onEventPress={openTimelineSheet}
             />
 
             <Pressable
                 style={[styles.buttonContainer, { backgroundColor: theme.buttonColor }]}
-                onPress={addTimeline}>
+                onPress={openTimelineModal}>
                 <Text style={[styles.buttonText, { color: theme.color }]}>+</Text>
             </Pressable>
 

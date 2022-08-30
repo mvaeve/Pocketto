@@ -1,14 +1,14 @@
 import React, { useState } from 'react'
-import { StyleSheet, View, Text, Modal, Pressable, Alert, TouchableOpacity } from 'react-native';
+import { StyleSheet, View, Text, Modal, Alert, TouchableOpacity } from 'react-native';
 import { ThemeContext } from "../themes/theme-context";
 import { Ionicons } from "@expo/vector-icons";
 import Swiper from 'react-native-swiper';
 import TaskManager from './TaskManager';
 import ToDo from './ToDo';
-import Memo from './Memo';
+import Album from './Album';
 import { Calendar, CalendarList, Agenda } from 'react-native-calendars';
 import moment from 'moment';
-import CustomCards from './components/CustomCards';
+import CustomRecap from './components/CustomRecap';
 
 
 
@@ -46,7 +46,7 @@ function CalendarHome({ navigation }) {
                                 <TouchableOpacity style={styles.modal} onPress={() => console.log('do nothing')} activeOpacity={1} >
 
                                     <View style={[styles.modalView, { backgroundColor: theme.backgroundColor, }]}>
-                                  <CustomCards day={archiveDate}/>
+                                        <CustomRecap day={archiveDate} />
                                     </View>
 
                                 </TouchableOpacity>
@@ -132,7 +132,7 @@ function CalendarHome({ navigation }) {
                 </View>
 
                 <View style={[styles.swiperContainer, { backgroundColor: theme.backgroundColor }]}>
-                    <Memo day={day} />
+                    <Album day={day} />
                 </View>
 
             </Swiper>
@@ -193,12 +193,12 @@ const styles = StyleSheet.create({
         alignItems: "center",
         shadowColor: "#000",
         shadowOffset: {
-            width: 0,
-            height: 2
+            width: 3,
+            height: 10
         },
-        shadowOpacity: 0.25,
-        shadowRadius: 4,
-        elevation: 5
+        shadowOpacity: 0.7,
+        shadowRadius: 20,
+        elevation: 10
     },
 
 

@@ -4,7 +4,6 @@ import { ThemeContext } from "../themes/theme-context";
 import CustomInput from './components/CustomInputs';
 import { db } from "../firebase";
 import { collection, query, where, getDocs, deleteDoc, setDoc, doc } from "firebase/firestore";
-import moment from 'moment';
 import { useIsFocused } from '@react-navigation/native';
 import * as Haptics from "expo-haptics";
 import { useActionSheet } from "@expo/react-native-action-sheet";
@@ -48,7 +47,22 @@ const ToDo = ({ day }) => {
 
 	const getTimestampInSeconds = () => {
 		return Math.floor(Date.now() / 1000).toString()
-	  }
+	}
+
+	const markComplete = async (postIt) => {
+		const up = query(collection(db, 'Todos', day, "todo"), where('text', '==', postIt.text));
+		const docSnap = await getDocs(up);
+		docSnap.forEach((doc) => {
+			setDoc(doc.ref, {
+				date: day,
+				text: postIt.text,
+				completed: !doc.data().completed,
+			});
+			setState(!state);
+		})
+	}
+
+
 
 	const onPostItLongPress = (postIt) => {
 		Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Success);
@@ -58,7 +72,6 @@ const ToDo = ({ day }) => {
 
 	const addPostIt = async () => {
 		// setTodoList([...todoList, { text: todoController }]);
-		const timestamp = 
 		await setDoc(doc(db, `Todos/${day}/todo`, getTimestampInSeconds()), {
 			text: todoController,
 			completed: false,
@@ -104,20 +117,26 @@ const ToDo = ({ day }) => {
 				`${todoControllerOld} have been updated to ${todoController}!`
 			);
 			setTodoController("");
-			setTodoControllerOld("");
+			setTodoControllerOld(todoController);
 		});
 	}
 
 
 	const openPostItSheet = (postIt) => {
-		// console.log(postIt)
+		let value = "";
+		if (postIt.completed === true) {
+			value = "incomplete"
+		}else {
+			value = "complete"
+		}
 		const options = [
+			"Mark as " + value,
 			"Edit Post It",
 			"Delete Post It",
 			"Cancel",
 		];
-		const cancelButtonIndex = 2;
-		const destructiveButtonIndex = 1;
+		const cancelButtonIndex = 3;
+		const destructiveButtonIndex = 2;
 
 		showActionSheetWithOptions(
 			{
@@ -141,6 +160,8 @@ const ToDo = ({ day }) => {
 					);
 
 				} else if (buttonIndex === 0) {
+					markComplete(postIt);
+				} else if (buttonIndex === 1) {
 					editPostIt(postIt);
 				}
 			}
@@ -189,11 +210,20 @@ const ToDo = ({ day }) => {
 			<View style={[styles.toDoBoard, { backgroundColor: theme.backgroundCard, borderColor: theme.secColor }]}>
 				{isLoading ? <ActivityIndicator /> :
 					todoList.map((postIt, i) => {
-
+						
 						return (
-							<View key={i} style={[styles.postIt, { backgroundColor: theme.pinkColor }]} >
-								<Pressable onLongPress={() => { onPostItLongPress(postIt); }}>
-									<Text style={styles.postItText}>{postIt.text}</Text>
+							<View key={i}
+								style={postIt.completed ?
+									[styles.postItCompleted, { backgroundColor: theme.lightgray }] :
+									[styles.postIt, { backgroundColor: theme.pinkColor }]
+								} >
+								<Pressable
+									onLongPress={() => { onPostItLongPress(postIt); }}
+								>
+									<Text style={postIt.completed ?
+										styles.postItCompletedText :
+										styles.postItText
+									}>{postIt.text}</Text>
 								</Pressable>
 							</View>
 						)
@@ -287,7 +317,30 @@ const styles = StyleSheet.create({
 	modalText: {
 		marginBottom: 15,
 		textAlign: "center"
-	}
+	},
+	postItCompleted: {
+		width: 150,
+		height: 150,
+		justifyContent: 'center',
+		alignItems: 'center',
+		margin: 10,
+		shadowColor: "#FFF",
+		shadowOffset: {
+			width: 2,
+			height: 3
+		},
+		shadowOpacity: 0.5,
+		shadowRadius: 5,
+		elevation: 1
+	},
+	postItCompletedText: {
+		fontSize: 20,
+		alignContent: 'center',
+		color: "gray"
+	},
+
+
+
 
 })
 

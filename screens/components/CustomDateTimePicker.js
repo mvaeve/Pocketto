@@ -6,7 +6,7 @@ import { ThemeContext } from '../../themes/theme-context';
 
 const CustomDateTimePicker = ({ placeholder, modes, dateValue, onDateChange }) => {
     const [activate, setActivate] = useState(false);
-    const [value, setValue] = useState(dateValue ? true : false);
+    const [value, setValue] = useState(dateValue!== "" ? true : false);
     const [date, setDate] = useState(moment());
     const [show, setShow] = useState(false);
     const { dark, theme } = React.useContext(ThemeContext);
@@ -23,7 +23,7 @@ const CustomDateTimePicker = ({ placeholder, modes, dateValue, onDateChange }) =
                 onDateChange(date.format('YYYY-MM-DD'));
             }
             else {
-                onDateChange(date.format('HH:mm:00'));
+                onDateChange(date.format('HH:mm'));
             }
         }
     }
@@ -37,7 +37,7 @@ const CustomDateTimePicker = ({ placeholder, modes, dateValue, onDateChange }) =
             onDateChange(date.format('YYYY-MM-DD'));
         }
         else {
-            onDateChange(date.format('HH:mm:00'));
+            onDateChange(date.format('HH:mm'));
         }
 
         setShow(false);
@@ -75,7 +75,7 @@ const CustomDateTimePicker = ({ placeholder, modes, dateValue, onDateChange }) =
                 ) : (activate === true && modes ==="date" ) ? (
                     <Text style = {{color: theme.color}}>{date.format('YYYY-MM-DD')}</Text>
                 ) : (
-                    <Text style = {{color: theme.color}}>{date.format('HH:mm:00')}</Text>
+                    <Text style = {{color: theme.color}}>{date.format('HH:mm')}</Text>
                 )
                 }
 
