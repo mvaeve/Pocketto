@@ -71,7 +71,10 @@ const ToDo = ({ day }) => {
 	};
 
 	const addPostIt = async () => {
-		// setTodoList([...todoList, { text: todoController }]);
+		//make document exist
+		await setDoc(doc(db, `Todos/${day}`), {
+			id: 1
+		})
 		await setDoc(doc(db, `Todos/${day}/todo`, getTimestampInSeconds()), {
 			text: todoController,
 			completed: false,

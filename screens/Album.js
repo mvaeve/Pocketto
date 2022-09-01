@@ -73,6 +73,10 @@ const Album = ({ day }) => {
       // upload the image in an array of bytes, 
       //so result.uri is the image encoded into a string then later convert to bytes
       await uploadBytes(reference, bytes);
+      //make document exist
+      await setDoc(doc(db, `Albums/${day}`), {
+        id: 1
+      })
       await setDoc(doc(db, `Albums/${day}/album`, getTimestampInSeconds()), {
         imageURL: await getDownloadURL(reference),
       })
@@ -93,7 +97,7 @@ const Album = ({ day }) => {
           layoutCardOffset={9}
           ref={isCarousel}
           data={data}
-          renderItem={({ item, index }) => <CustomCards item={item} key={index} day={day} onStateChange={setState} currState={state}/>}
+          renderItem={({ item, index }) => <CustomCards item={item} key={index} day={day} onStateChange={setState} currState={state} />}
           sliderWidth={SLIDER_WIDTH}
           itemWidth={ITEM_WIDTH}
           inactiveSlideShift={0}

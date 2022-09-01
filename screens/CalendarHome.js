@@ -1,5 +1,5 @@
-import React, { useState } from 'react'
-import { StyleSheet, View, Text, Modal, Alert, TouchableOpacity } from 'react-native';
+import React, { useState, useEffect } from 'react'
+import { StyleSheet, View, Text, Modal, Alert, TouchableOpacity, ScrollView } from 'react-native';
 import { ThemeContext } from "../themes/theme-context";
 import { Ionicons } from "@expo/vector-icons";
 import Swiper from 'react-native-swiper';
@@ -9,8 +9,8 @@ import Album from './Album';
 import { Calendar, CalendarList, Agenda } from 'react-native-calendars';
 import moment from 'moment';
 import CustomRecap from './components/CustomRecap';
-
-
+import { collection, query, where, getDocs, deleteDoc, setDoc, doc } from "firebase/firestore";
+import { db } from "../firebase";
 
 function CalendarHome({ navigation }) {
     const { dark, theme, toggle } = React.useContext(ThemeContext);
@@ -22,6 +22,69 @@ function CalendarHome({ navigation }) {
     const dateTitle = moment().format('dddd, MMMM Do');
     const [archiveDate, setArchiveDate] = useState("");
     const [modalVisible, setModalVisible] = useState(false);
+
+    const [todoDate, setTodoDate] = useState([]);
+    const [taskDate, setTaskDate] = useState([]);
+    const [albumDate, setAlbumDate] = useState([]);
+
+    useEffect(() => {
+        const loadToDoDate = async () => {
+            const q = query(collection(db, "Todos"));
+
+            const querySnapshot = await getDocs(q);
+            let toDos = [];
+            querySnapshot.forEach((doc) => {
+                toDos.push(doc.id)
+            });
+
+            setTodoDate(toDos);
+        }
+
+        const loadTaskDate = async () => {
+            const q = query(collection(db, "Timelines"));
+
+            const querySnapshot = await getDocs(q);
+            let timelines = [];
+            querySnapshot.forEach((doc) => {
+                timelines.push(doc.id)
+            });
+
+            setTaskDate(timelines);
+        }
+        
+        const loadAlbumDate = async () => {
+            const q = query(collection(db, "Albums"));
+
+            const querySnapshot = await getDocs(q);
+            let albums = [];
+            querySnapshot.forEach((doc) => {
+                albums.push(doc.id)
+            });
+
+            setAlbumDate(albums);
+        }
+        setTodoDate([])
+        setTaskDate([])
+        setAlbumDate([])
+        loadToDoDate()
+        loadTaskDate()
+        loadAlbumDate()
+
+       
+    }, []);
+
+    var combined = (todoDate.concat(taskDate).concat(albumDate));
+    var allDatesUsed =combined.filter((item, pos) => combined.indexOf(item) === pos)
+
+    let markedDay ={}
+    allDatesUsed.map((date) => {
+        markedDay[date] = {
+            marked: true, dotColor: 'red'
+        }
+    })
+    markedDay[day] =  { selected: true };
+
+    // console.log(markedDay)
 
     return (
         <View style={styles.container}>
@@ -45,8 +108,10 @@ function CalendarHome({ navigation }) {
                             <TouchableOpacity style={styles.centeredView} onPress={() => { setModalVisible(false) }}>
                                 <TouchableOpacity style={styles.modal} onPress={() => console.log('do nothing')} activeOpacity={1} >
 
-                                    <View style={[styles.modalView, { backgroundColor: theme.backgroundColor, }]}>
+                                    <View style={[styles.modalView, { backgroundColor: theme.backgroundCard, }]}>
+                                      
                                         <CustomRecap day={archiveDate} />
+                                 
                                     </View>
 
                                 </TouchableOpacity>
@@ -90,9 +155,7 @@ function CalendarHome({ navigation }) {
 
 
                                 }}
-                                markedDates={{
-                                    [day]: { selected: true }
-                                }}
+                                markedDates={markedDay}
 
                                 // Month format in calendar title. Formatting values: http://arshaw.com/xdate/#Formatting
                                 monthFormat={'MM yyyy'}

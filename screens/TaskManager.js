@@ -17,7 +17,7 @@ const TaskManager = ({ day }) => {
 
     const [startTimeController, setStartTimeController] = useState("");
     const [startTimeControlleOld, setStartTimeControllerOld] = useState("");
-    const [titleController, setTitleController] = useState("");  
+    const [titleController, setTitleController] = useState("");
     const [titleControllerOld, setTitleControllerOld] = useState("");
     const [descriptionController, setDescriptionController] = useState("");
     const [descriptionControllerOld, setDescriptionControllerOld] = useState("");
@@ -28,7 +28,7 @@ const TaskManager = ({ day }) => {
     const [isLoading, setIsLoading] = useState(true);
     const [isEdit, setIsEdit] = useState(false);
 
-   
+
 
     const openTimelineModal = () => {
         setModalVisible(true)
@@ -61,107 +61,109 @@ const TaskManager = ({ day }) => {
         return Math.floor(Date.now() / 1000).toString()
     }
     const addTimeline = async () => {
-		// setTodoList([...todoList, { text: todoController }]);
-		const timestamp = 
-		await setDoc(doc(db, `Timelines/${day}/timeline`, getTimestampInSeconds()), {
+        //make document exist
+        await setDoc(doc(db, `Timelines/${day}`), {
+            id: 1
+        })
+        await setDoc(doc(db, `Timelines/${day}/timeline`, getTimestampInSeconds()), {
             time: startTimeController,
-			title: titleController,
+            title: titleController,
             description: descriptionController,
-			completed: false,
-		})
+            completed: false,
+        })
         setStartTimeController("")
-		setTitleController("")
+        setTitleController("")
         setDescriptionController("")
-		setState(!state);
-	}
+        setState(!state);
+    }
 
-	const deleteTimeline = async (timeline) => {
+    const deleteTimeline = async (timeline) => {
 
-		const d = query(collection(db, 'Timelines', day, "timeline"), where('title', '==', timeline.title));
-		const docSnap = await getDocs(d);
-		docSnap.forEach((doc) => {
-			deleteDoc(doc.ref);
-			setState(!state);
-			Alert.alert(
-				"Hooray!",
-				`${timeline.title} have been deleted!`
-			);
-		});
-	}
+        const d = query(collection(db, 'Timelines', day, "timeline"), where('title', '==', timeline.title));
+        const docSnap = await getDocs(d);
+        docSnap.forEach((doc) => {
+            deleteDoc(doc.ref);
+            setState(!state);
+            Alert.alert(
+                "Hooray!",
+                `${timeline.title} have been deleted!`
+            );
+        });
+    }
 
-	const editTimeline = (timeline) => {
-		setModalVisible(true);
-		setIsEdit(true);
+    const editTimeline = (timeline) => {
+        setModalVisible(true);
+        setIsEdit(true);
 
         setStartTimeController(timeline.time);
         setStartTimeControllerOld(timeline.time);
-		setTitleController(timeline.title);
-		setTitleControllerOld(timeline.title);
+        setTitleController(timeline.title);
+        setTitleControllerOld(timeline.title);
         setDescriptionController(timeline.description);
         setDescriptionControllerOld(timeline.description);
-	}
+    }
 
-	const updateTimeline = async () => {
+    const updateTimeline = async () => {
         console.log("entered")
-		const up = query(collection(db, 'Timelines', day, "timeline"), where('title', '==', titleControllerOld));
-		const docSnap = await getDocs(up);
-		docSnap.forEach((doc) => {
-			setDoc(doc.ref, {
-				time: startTimeController,
-				title: titleController,
+        const up = query(collection(db, 'Timelines', day, "timeline"), where('title', '==', titleControllerOld));
+        const docSnap = await getDocs(up);
+        docSnap.forEach((doc) => {
+            setDoc(doc.ref, {
+                time: startTimeController,
+                title: titleController,
                 description: descriptionController,
-			});
-			setState(!state);
-			Alert.alert(
-				"Hooray!",
-				`${titleControllerOld} have been updated to ${titleController}!`
-			);
+            });
+            setState(!state);
+            Alert.alert(
+                "Hooray!",
+                `${titleControllerOld} have been updated to ${titleController}!`
+            );
             setStartTimeController("");
             setStartTimeControllerOld("");
-			setTitleController("");
-			setTitleControllerOld("");
+            setTitleController("");
+            setTitleControllerOld("");
             setDescriptionController("");
             setDescriptionControllerOld("");
-		});
-	}
+        });
+    }
 
 
-	const openTimelineSheet = (timeline) => {
-		const options = [
-			`Edit ${timeline.title}` ,
-			`Delete ${timeline.title}`,
-			"Cancel",
-		];
-		const cancelButtonIndex = 2;
-		const destructiveButtonIndex = 1;
+    const openTimelineSheet = (timeline) => {
+        const options = [
+            `Edit ${timeline.title}`,
+            `Delete ${timeline.title}`,
+            "Cancel",
+        ];
+        const cancelButtonIndex = 2;
+        const destructiveButtonIndex = 1;
 
-		showActionSheetWithOptions(
-			{
-				options,
-				cancelButtonIndex,
-				destructiveButtonIndex,
-				userInterfaceStyle: dark ? "dark" : "light",
-			},
-			(buttonIndex) => {
-				if (buttonIndex === destructiveButtonIndex) {
-					Alert.alert(`Delete ${timeline.title}`,
-						`Are you sure you want to delete activity ${timeline.title}? `,
-						[
-							{
-								text: "Cancel",
-								onPress: () => console.log("Cancel Pressed"),
-								style: "cancel"
-							},
-							{ text: "OK", onPress: () => deleteTimeline(timeline) }
-						]
-					);
+        showActionSheetWithOptions(
+            {
+                options,
+                cancelButtonIndex,
+                destructiveButtonIndex,
+                userInterfaceStyle: dark ? "dark" : "light",
+            },
+            (buttonIndex) => {
+                if (buttonIndex === destructiveButtonIndex) {
+                    Alert.alert(`Delete ${timeline.title}`,
+                        `Are you sure you want to delete activity ${timeline.title}? `,
+                        [
+                            {
+                                text: "Cancel",
+                                onPress: () => console.log("Cancel Pressed"),
+                                style: "cancel"
+                            },
+                            { text: "OK", onPress: () => deleteTimeline(timeline) }
+                        ]
+                    );
 
-				} else if (buttonIndex === 0) {
-					editTimeline(timeline);
-				}
-			}
-		);
-	};
+                } else if (buttonIndex === 0) {
+                    editTimeline(timeline);
+                }
+            }
+        );
+    };
 
     return (
         <View style={[styles.container, { backgroundColor: theme.backgroundColor }]}>
