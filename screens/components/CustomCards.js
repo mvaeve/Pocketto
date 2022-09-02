@@ -113,7 +113,7 @@ const CustomCards = ({ item, index, day, onStateChange, currState }) => {
             source={{ uri: item.imageURL }}
           />
           <View style={styles.caption}>
-            {item.caption !== undefined && <Text style={[styles.captionText, { color: theme.secColor }]}>{item.caption}</Text>}
+            {item.caption !== undefined && <Text style={[styles.captionText, { color: theme.black }]}>{item.caption}</Text>}
           </View>
         </View>
       </Pressable>

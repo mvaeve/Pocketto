@@ -129,7 +129,7 @@ const ToDo = ({ day }) => {
 		let value = "";
 		if (postIt.completed === true) {
 			value = "incomplete"
-		}else {
+		} else {
 			value = "complete"
 		}
 		const options = [
@@ -211,9 +211,14 @@ const ToDo = ({ day }) => {
 				</TouchableOpacity>
 			</Modal>
 			<View style={[styles.toDoBoard, { backgroundColor: theme.backgroundCard, borderColor: theme.secColor }]}>
+				{todoList.length === 0 &&
+					<View style={styles.noActContainer}>
+						<Text style={[styles.noActText, { color: theme.color }]}>Go ahead and add a new post it!</Text>
+					</View>
+				}
 				{isLoading ? <ActivityIndicator /> :
 					todoList.map((postIt, i) => {
-						
+
 						return (
 							<View key={i}
 								style={postIt.completed ?
@@ -273,7 +278,9 @@ const styles = StyleSheet.create({
 	},
 	postItText: {
 		fontSize: 20,
-		alignContent: 'center'
+		alignContent: 'center',
+		padding: 3,
+		textAlign: 'center'
 	},
 	buttonContainer: {
 		paddingVertical: 8,
@@ -339,8 +346,24 @@ const styles = StyleSheet.create({
 	postItCompletedText: {
 		fontSize: 20,
 		alignContent: 'center',
-		color: "gray"
+		color: "gray", 
+		textAlign:'center'
 	},
+	noActContainer: {
+		justifyContent: 'center',
+		alignItems: 'center',
+		flex: 1,
+		top: 170,
+		padding: 20
+
+	},
+	noActText: {
+		fontSize: 26,
+		textAlign: 'center',
+
+
+	}
+
 
 
 

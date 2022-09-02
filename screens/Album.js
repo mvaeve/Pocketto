@@ -92,6 +92,11 @@ const Album = ({ day }) => {
   return (
     <View style={[styles.container, { backgroundColor: theme.backgroundColor }]}>
       <View style={[styles.board, { backgroundColor: theme.backgroundColor, borderColor: theme.backgroundCard }]}>
+        {data.length === 0 &&
+          <View style={styles.noActContainer}>
+            <Text style={[styles.noActText, { color: theme.color }]}>Go ahead and add a new polaroid!</Text>
+          </View>
+        }
         <Carousel
           layout="tinder"
           layoutCardOffset={9}
@@ -113,7 +118,7 @@ const Album = ({ day }) => {
             height: 10,
             borderRadius: 5,
             marginHorizontal: 0,
-            backgroundColor: 'rgba(0, 0, 0, 0.92)'
+            backgroundColor: theme.secColor
           }}
           inactiveDotOpacity={0.4}
           inactiveDotScale={0.6}
@@ -153,6 +158,21 @@ const styles = StyleSheet.create({
   buttonText: {
     fontSize: 32
   },
+  noActContainer: {
+		justifyContent: 'center',
+		alignItems: 'center',
+		flex: 1,
+		top: 170,
+		padding: 20
+
+	},
+	noActText: {
+		fontSize: 26,
+		textAlign: 'center',
+
+
+	}
+
 
 })
 

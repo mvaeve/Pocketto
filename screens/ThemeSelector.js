@@ -49,10 +49,11 @@ function ThemeSelector({navigation}) {
 const styles = StyleSheet.create({
     container: {
         flex: 1,
-        justifyContent: 'center'
+        justifyContent: 'center',
+        
     },
     switchContainer: {
-
+        flex:1,
         flexDirection: "row",
         justifyContent: "space-evenly",
         alignItems: "center",
@@ -71,7 +72,9 @@ const styles = StyleSheet.create({
         alignItems: 'center',
         padding: 10,
         marginHorizontal: 50,
-        borderRadius: 50
+        borderRadius: 50,
+        marginBottom:40
+       
     },
     confirmText: {
         fontSize: 20

@@ -67,8 +67,8 @@ const CustomRecap = ({ day }) => {
 
         <View style={styles.container}>
 
-            <Text style={styles.dateTitleText}>{day}</Text>
-            <Text style={styles.contentText}>On this day, you completed {completedTodo.length.toString()} todo </Text>
+            <Text style={[styles.dateTitleText, {color:theme.color}]}>{day}</Text>
+            <Text style={[styles.contentText, {color:theme.color}]}>On this day, you completed {completedTodo.length.toString()} todo </Text>
             {completedTodo.map((todo, i) => {
                 return (
                     <CustomUnorderedList key={i} text={todo.text} color={theme.color} />
@@ -77,8 +77,8 @@ const CustomRecap = ({ day }) => {
 
 
             {timelineList.length == 0 ?
-                <Text style={styles.contentText}>No task was completed...</Text> :
-                <Text style={styles.contentText}>And also completed these tasks</Text>
+                <Text style={[styles.contentText, {color:theme.color}]}>No task was completed...</Text> :
+                <Text style={[styles.contentText, {color:theme.color}]}>And also completed these tasks</Text>
             }
             {timelineList.map((timeline, i) => {
                 let timeTitle = timeline.time + " - " + timeline.title
@@ -88,8 +88,8 @@ const CustomRecap = ({ day }) => {
             })}
 
             {albumList.length == 0 ? 
-                 <Text style={styles.contentText}>No photos were added for viewing...</Text> :
-                 <Text style={styles.contentText}>Let's take a look at these memories!</Text>
+                 <Text style={[styles.contentText, {color:theme.color}]}>No photos were added for viewing...</Text> :
+                 <Text style={[styles.contentText, {color:theme.color}]}>Let's take a look at these memories!</Text>
         }
             <View style={styles.imageContainer}>
                 {albumList.map((image, i) => {
@@ -112,11 +112,6 @@ const CustomRecap = ({ day }) => {
                     )
                 })}
             </View>
-
-
-
-
-
         </View>
 
     )

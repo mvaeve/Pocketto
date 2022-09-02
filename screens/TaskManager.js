@@ -89,6 +89,14 @@ const TaskManager = ({ day }) => {
                 `${timeline.title} have been deleted!`
             );
         });
+        setStartTimeController("");
+        setStartTimeControllerOld("");
+        setTitleController("");
+        setTitleControllerOld("");
+        setDescriptionController("");
+        setDescriptionControllerOld("");
+        setIsEdit(false)
+       
     }
 
     const editTimeline = (timeline) => {
@@ -104,7 +112,6 @@ const TaskManager = ({ day }) => {
     }
 
     const updateTimeline = async () => {
-        console.log("entered")
         const up = query(collection(db, 'Timelines', day, "timeline"), where('title', '==', titleControllerOld));
         const docSnap = await getDocs(up);
         docSnap.forEach((doc) => {
@@ -116,7 +123,7 @@ const TaskManager = ({ day }) => {
             setState(!state);
             Alert.alert(
                 "Hooray!",
-                `${titleControllerOld} have been updated to ${titleController}!`
+                `${titleControllerOld} have been updated!`
             );
             setStartTimeController("");
             setStartTimeControllerOld("");
@@ -124,6 +131,8 @@ const TaskManager = ({ day }) => {
             setTitleControllerOld("");
             setDescriptionController("");
             setDescriptionControllerOld("");
+            setIsEdit(false)
+            setState(!state)
         });
     }
 
@@ -167,6 +176,11 @@ const TaskManager = ({ day }) => {
 
     return (
         <View style={[styles.container, { backgroundColor: theme.backgroundColor }]}>
+             {timelineList.length === 0 &&
+                <View style={styles.noActContainer}>
+                    <Text style={[styles.noActText, {color:theme.color}]}>Go ahead and add a new activity!</Text>
+                </View>
+            }
             <Modal
                 animationType="slide"
                 transparent={true}
@@ -219,6 +233,8 @@ const TaskManager = ({ day }) => {
                 </TouchableOpacity>
             </Modal>
 
+           
+
             <Timeline
                 style={styles.list}
                 data={timelineList}
@@ -237,6 +253,7 @@ const TaskManager = ({ day }) => {
                 columnFormat='two-column'
                 onEventPress={openTimelineSheet}
             />
+
 
             <Pressable
                 style={[styles.buttonContainer, { backgroundColor: theme.buttonColor }]}
@@ -314,6 +331,20 @@ const styles = StyleSheet.create({
     modalText: {
         marginBottom: 15,
         textAlign: "center"
+    },
+    noActContainer: {
+        justifyContent:'center',
+        alignItems:'center',
+        flex:1,
+        top: 170,
+        padding: 20
+        
+    },
+    noActText: {
+        fontSize: 26,
+        textAlign:'center',
+        
+
     }
 
 });

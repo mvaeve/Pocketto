@@ -10,6 +10,7 @@ module.exports = {
       lightgray: 'lightgray', //orange 
       white: "white",
       gray: "gray",
+      black: "black"
     },
     niceTheme: {
       backgroundColor: "#141414",
@@ -21,7 +22,9 @@ module.exports = {
       pinkColor: '#916384',  //dark pink
       orange: '#ffb536', //orange
       white:"white",
-      gray:"gray"
+      gray:"gray",
+      lightgray: '#212121', //orange 
+      black: "black"
       
     },
   };
