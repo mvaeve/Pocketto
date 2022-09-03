@@ -3,21 +3,21 @@ import { StatusBar } from "react-native";
 import { Globals, Utils } from "../helpers";
 
 const initialState = {
-  dark: false,
-  theme: Globals.lightTheme,
-  toggle: () => {},
+  color:  "#FFE2A8",  //baby orange
+  theme: Globals.orangeTheme,
+  toggleColor: () => {},
 };
 
 const ThemeContext = React.createContext(initialState);
 
 function ThemeProvider({ children }) {
-  const [dark, setDark] = React.useState(null);
+  const [color, setColor] = React.useState("#FFE2A8");
 
   // Fetch user preference for dark or light mode
-  const readDarkStatus = async () => {
+  const readColorStatus = async () => {
     try {
-      const result = await Utils.getData("dark_mode");
-      setDark(result === "true");
+      const result = await Utils.getData("color_mode");
+      setColor(result);
     } catch (e) {
       //console.log("error: " + e);
     }
@@ -25,23 +25,24 @@ function ThemeProvider({ children }) {
 
   // Listening to changes of device appearance while in run-time
   React.useEffect(() => {
-    readDarkStatus();
+    readColorStatus();
   }, []);
 
   // To toggle between dark and light modes
-  const toggle = () => {
-    setDark(!dark);
-    console.log(dark)
-    
-    Utils.storeData("dark_mode", !dark ? "true" : "false");
+  const toggleColor = (color) => {
+    setColor(color);
+    Utils.storeData("color_mode", color);
   };
 
   // Filter the styles based on the theme selected
-  const theme = dark ? Globals.niceTheme : Globals.lightTheme;
+  const theme = color === "#ffe2a8" ? Globals.orangeTheme :
+                  color ===   "#141414" ? Globals.darkTheme :
+                  color ===   "#ffffff" ? Globals.lightTheme :
+                  Globals.blueTheme
 
   return (
-    <ThemeContext.Provider value={{ theme, dark, toggle }}>
-      <StatusBar barStyle={!dark ? "dark-content" : "light-content"} />
+    <ThemeContext.Provider value={{ theme, color, toggleColor }}>
+      <StatusBar barStyle={color !== "#141414" ? "dark-content" : "light-content"} />
       {children}
     </ThemeContext.Provider>
   );

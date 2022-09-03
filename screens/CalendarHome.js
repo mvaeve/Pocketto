@@ -13,7 +13,7 @@ import { collection, query, where, getDocs, deleteDoc, setDoc, doc } from "fireb
 import { db } from "../firebase";
 
 function CalendarHome({ navigation }) {
-    const { dark, theme, toggle } = React.useContext(ThemeContext);
+    const { color, theme, toggle } = React.useContext(ThemeContext);
     const showTheme = () => {
         navigation.navigate("ThemeSelector")
     }
@@ -139,7 +139,7 @@ function CalendarHome({ navigation }) {
                             width: 370
                         }}>
                             <Calendar
-                                key={dark}
+                                key={color}
                                 // Handler which gets executed on day press. Default = undefined
                                 onDayPress={day => {
                                     // console.log('selected day', day.dateString);
