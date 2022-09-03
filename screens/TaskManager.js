@@ -69,7 +69,6 @@ const TaskManager = ({ day }) => {
             time: startTimeController,
             title: titleController,
             description: descriptionController,
-            completed: false,
         })
         setStartTimeController("")
         setTitleController("")
@@ -83,7 +82,7 @@ const TaskManager = ({ day }) => {
         const docSnap = await getDocs(d);
         docSnap.forEach((doc) => {
             deleteDoc(doc.ref);
-            setState(!state);
+          
             Alert.alert(
                 "Hooray!",
                 `${timeline.title} have been deleted!`
@@ -96,12 +95,12 @@ const TaskManager = ({ day }) => {
         setDescriptionController("");
         setDescriptionControllerOld("");
         setIsEdit(false)
+        setState(!state);
        
     }
 
     const editTimeline = (timeline) => {
-        setModalVisible(true);
-        setIsEdit(true);
+      
 
         setStartTimeController(timeline.time);
         setStartTimeControllerOld(timeline.time);
@@ -109,6 +108,8 @@ const TaskManager = ({ day }) => {
         setTitleControllerOld(timeline.title);
         setDescriptionController(timeline.description);
         setDescriptionControllerOld(timeline.description);
+        setModalVisible(true);
+        setIsEdit(true);
     }
 
     const updateTimeline = async () => {

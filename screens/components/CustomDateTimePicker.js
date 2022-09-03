@@ -10,7 +10,7 @@ const CustomDateTimePicker = ({ placeholder, modes, dateValue, onDateChange }) =
     const [date, setDate] = useState(moment());
     const [show, setShow] = useState(false);
     const { dark, theme } = React.useContext(ThemeContext);
-
+    console.log(dateValue)
     const onChange = (e, selectedDate) => {
         setDate(moment(selectedDate))
     }

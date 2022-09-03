@@ -72,6 +72,7 @@ const ToDo = ({ day }) => {
 
 	const addPostIt = async () => {
 		//make document exist
+		console.log("ENTER")
 		await setDoc(doc(db, `Todos/${day}`), {
 			id: 1
 		})
@@ -121,6 +122,7 @@ const ToDo = ({ day }) => {
 			);
 			setTodoController("");
 			setTodoControllerOld(todoController);
+			setIsEdit(false)
 		});
 	}
 
